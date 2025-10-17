@@ -6,7 +6,7 @@ Este é um projeto simples em Java para console, desenvolvido como um exercício
 
 Demonstrar a aplicação dos conceitos fundamentais da POO em um sistema de console funcional para gerenciamento básico de imóveis.
 
-## Funcionalidades Atuais (Versão Simplificada)
+## Funcionalidades Atuais
 
 * Cadastro de Imóveis (Casa, Apartamento, Comercio) com informações essenciais (endereço, proprietário, aluguel base, taxa de manutenção, permite pets).
 * Aluguel e Disponibilização de Imóveis (marcando como alugado/disponível).

@@ -1,5 +1,3 @@
-import java.time.LocalDate; 
-
 public abstract class Imovel {
 
     protected String endereco;
@@ -30,12 +28,28 @@ public abstract class Imovel {
 
     public CalculaAluguel calcularAluguel(int meses) {
         double valorMensalTotal = this.valorAluguelBase + this.taxaManutencao;
-        double valorTotalFinal = valorMensalTotal * meses;
+        double subTotal = valorMensalTotal * meses; 
+
+        double percentualDesconto = 0.0;
+        if (meses >= 36) { 
+            percentualDesconto = 0.10; 
+        } else if (meses >= 24) { 
+            percentualDesconto = 0.05; 
+        } else if (meses >= 12) { 
+            percentualDesconto = 0.02; 
+        }
+
+        double valorDesconto = subTotal * percentualDesconto; 
+
+        double valorTotalFinal = subTotal - valorDesconto;
 
         return new CalculaAluguel(
             valorAluguelBase, 
             taxaManutencao, 
             meses,
+            subTotal, 
+            percentualDesconto, 
+            valorDesconto, 
             valorTotalFinal 
         );
     }

@@ -1,17 +1,19 @@
-// Sem 'package'
-
 import java.util.List;          
 import java.util.Locale;        
 import java.util.Scanner;       
+import java.text.NumberFormat; 
+import java.time.format.DateTimeFormatter; 
 
 public class MenuImobiliaria {
     
     private final GerenciadorImoveis gerenciador; 
     private final Scanner scanner;
+    private final NumberFormat currencyFormatter;
 
     public MenuImobiliaria(GerenciadorImoveis gerenciador, Scanner scanner) {
         this.gerenciador = gerenciador; 
         this.scanner = scanner;
+        this.currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
     }
 
     public void iniciar() {
@@ -67,12 +69,12 @@ public class MenuImobiliaria {
         System.out.println("\nPressione Enter para continuar...");
         scanner.nextLine();
     }
-
+    
     private String lerString(String prompt) {
         System.out.print(prompt + ": ");
         return scanner.nextLine();
     }
-
+    
     private double lerDouble(String prompt) {
         while (true) {
             try {
@@ -82,7 +84,7 @@ public class MenuImobiliaria {
             }
         }
     }
-
+    
     private int lerInt(String prompt) {
         while (true) {
             try {
@@ -92,7 +94,7 @@ public class MenuImobiliaria {
             }
         }
     }
-
+    
     private boolean lerBoolean(String prompt) {
         while (true) {
             String input = lerString(prompt + " (s/n)").toLowerCase();
@@ -101,7 +103,7 @@ public class MenuImobiliaria {
             System.out.println("Resposta invalida. Digite 's' para sim ou 'n' para nao.");
         }
     }
-
+    
     private Proprietario lerDadosProprietario() {
         System.out.println("--- Dados do Proprietario ---");
         String nome = lerString("Nome do Proprietario");
@@ -109,7 +111,7 @@ public class MenuImobiliaria {
         String cpf = lerString("CPF do Proprietario");
         return new Proprietario(nome, tel, cpf);
     }
-
+    
     private Inquilino lerDadosInquilino() {
         System.out.println("--- Dados do Inquilino ---");
         String nome = lerString("Nome do Inquilino");
@@ -124,16 +126,13 @@ public class MenuImobiliaria {
             System.out.println("Nenhum imovel encontrado.");
             return false;
         }
-
         for (Imovel imovel : lista) {
             System.out.println("---------------------------------");
             System.out.println(imovel.verificarDisponibilidade()); 
-            
             if (titulo.contains("TODOS")) {
                  System.out.println("Permite Pets: " + (imovel.isPermitePets() ? "Sim" : "Nao"));
                  System.out.println("Proprietario: " + imovel.contatoProprietario());
             }
-            
             if (titulo.contains("ALUGADOS") && imovel.getInquilino() != null) {
                  System.out.println("Inquilino: " + imovel.getInquilino().getNome());
             }
@@ -211,8 +210,15 @@ public class MenuImobiliaria {
                 
                 System.out.println("--- Detalhes Financeiros ---");
                 double valorMensalTotal = calc.getValorAluguelBaseMensal() + calc.getTaxaManutencaoMensal();
-                System.out.println("Valor Mensal (Aluguel + Taxa Manutencao): " + valorMensalTotal);
-                System.out.println("Valor Total para " + meses + " meses: " + calc.getValorTotalPeriodo()); 
+                System.out.println("Valor Mensal (Aluguel + Taxa Manutencao): " + currencyFormatter.format(valorMensalTotal));
+                
+                if (calc.getValorDesconto() > 0) {
+                     System.out.printf("Desconto Longo Prazo (%.0f%%): - %s\n", 
+                        (calc.getPercentualDesconto() * 100), 
+                        currencyFormatter.format(calc.getValorDesconto()));
+                }
+                
+                System.out.println("Valor Total para " + meses + " meses: " + currencyFormatter.format(calc.getValorTotalPeriodo())); 
             }
 
         } else {
@@ -246,10 +252,20 @@ public class MenuImobiliaria {
 
         if (calc != null) { 
             System.out.println("\n--- Projecao de Custos (" + endereco + ", " + numero + ", " + meses + " meses) ---");
-            System.out.println("Aluguel Base Mensal: " + calc.getValorAluguelBaseMensal());
-            System.out.println("Taxa Manutencao Mensal: " + calc.getTaxaManutencaoMensal());
+            System.out.println("Aluguel Base Mensal: " + currencyFormatter.format(calc.getValorAluguelBaseMensal()));
+            System.out.println("Taxa Manutencao Mensal: " + currencyFormatter.format(calc.getTaxaManutencaoMensal()));
+            
+            if (calc.getValorDesconto() > 0) {
+                 System.out.printf("Desconto Longo Prazo (%.0f%%): - %s\n", 
+                    (calc.getPercentualDesconto() * 100), 
+                    currencyFormatter.format(calc.getValorDesconto()));
+                 System.out.println("Subtotal com Desconto: " + currencyFormatter.format(calc.getValorTotalPeriodo())); 
+            } else {
+                 System.out.println("Subtotal (Sem Desconto): " + currencyFormatter.format(calc.getSubTotalSemDesconto()));
+            }
+           
             System.out.println("----------------------------------------------");
-            System.out.println("VALOR TOTAL PARA " + meses + " MESES: " + calc.getValorTotalPeriodo());
+            System.out.println("VALOR TOTAL PARA " + meses + " MESES: " + currencyFormatter.format(calc.getValorTotalPeriodo()));
 
         } else {
             System.out.println("Erro: Imovel nao encontrado.");

@@ -1,4 +1,4 @@
-# Projeto Imobiliaria Console
+# Projeto Imobiliaria 
 
 Este é um projeto simples em Java para console, desenvolvido como um exercício para aplicar conceitos de Programação Orientada a Objetos (POO). Ele simula o cadastro e aluguel de imóveis (Casas, Apartamentos e Comércios), focando nos pilares de Herança, Polimorfismo e Encapsulamento.
 
